@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS favourite_images CASCADE;
+
+CREATE TABLE favourite_images (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES user(id) ON DELETE CASCADE,
+  image_id INTEGER REFERENCES images(id) ON DELETE CASCADE
+);
