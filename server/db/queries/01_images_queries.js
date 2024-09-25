@@ -1,9 +1,9 @@
-const db = require('../connection');
+const db = require("../connection");
 
 //CREATE
 
 const createImage = async (image) => {
-  const { img_url, prompt_text, user_id } = image; 
+  const { img_url, prompt_text, user_id } = image;
   try {
     const newImage = await db.query(
       `
@@ -11,7 +11,7 @@ const createImage = async (image) => {
       VALUES ($1, $2, $3) 
       RETURNING *;
     `,
-      [img_url, prompt_text, user_id] 
+      [img_url, prompt_text, user_id]
     );
     return newImage.rows[0];
   } catch (err) {
@@ -45,7 +45,7 @@ const getImageById = async (id) => {
   } catch (err) {
     console.log(`ERROR: ${err}`);
   }
-}
+};
 
 const getImagesByUserId = async (user_id) => {
   try {
@@ -60,7 +60,7 @@ const getImagesByUserId = async (user_id) => {
   } catch (err) {
     console.log(`ERROR: ${err}`);
   }
-}
+};
 
 const getImagesByPrompt = async (prompt_text) => {
   try {
@@ -75,9 +75,63 @@ const getImagesByPrompt = async (prompt_text) => {
   } catch (err) {
     console.log(`ERROR: ${err}`);
   }
-}
+};
+
+const viewImageByOldest = async () => {
+  try {
+    const images = await db.query(
+      `
+      SELECT * FROM images
+      ORDER BY created_at ASC;
+    `
+    );
+    return images.rows;
+  } catch (err) {
+    console.log(`ERROR: ${err}`);
+  }
+};
+
+const viewImageByNewest = async () => {
+  try {
+    const images = await db.query(
+      `
+      SELECT * FROM images
+      ORDER BY created_at DESC;
+    `
+    );
+    return images.rows;
+  } catch (err) {
+    console.log(`ERROR: ${err}`);
+  }
+};
 
 //UPDATE
 
-
 //DELETE
+
+const deleteImage = async (id) => {
+  try {
+    const deletedImage = await db.query(
+      `
+      DELETE FROM images
+      WHERE id = $1
+      RETURNING *;
+    `,
+      [id]
+    );
+    return deletedImage.rows[0];
+  } catch (err) {
+    console.log(`ERROR: ${err}`);
+  }
+};
+
+module.exports = {
+  createImage,
+  getAllImages,
+  getImageById,
+  getImagesByUserId,
+  getImagesByPrompt,
+  viewImageByOldest,
+  viewImageByNewest,
+  deleteImage,
+};
