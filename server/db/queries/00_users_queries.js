@@ -2,6 +2,7 @@ const db = require("../connection");
 
 // CREATE
 
+// create a new user
 const createUser = async (user) => {
   const { username, email, password } = user;
   try {
@@ -18,8 +19,12 @@ const createUser = async (user) => {
     console.log(`ERROR: ${err}`);
   }
 };
+
+
 // READ
 
+
+// get all users
 const getAllUsers = async () => {
   try {
     const allUsers = await db.query(`
@@ -31,6 +36,7 @@ const getAllUsers = async () => {
   }
 };
 
+// get a user by id
 const getUserById = async (id) => {
   try {
     const user = await db.query(
@@ -46,6 +52,7 @@ const getUserById = async (id) => {
   }
 };
 
+// get a user by email
 const getUserByEmail = async (email) => {
   try {
     const user = await db.query(
@@ -61,6 +68,7 @@ const getUserByEmail = async (email) => {
   }
 };
 
+// get a user by username
 const getUserByUsername = async (username) => {
   try {
     const user = await db.query(
@@ -78,6 +86,7 @@ const getUserByUsername = async (username) => {
 
 // UPDATE
 
+// edit a user
 const udpdateUser = async (id, username, email, password) => {
   try {
     const updatedUser = await db.query(
@@ -97,6 +106,7 @@ const udpdateUser = async (id, username, email, password) => {
 
 // DELETE
 
+// delete a user
 const deleteUser = async (id) => {
   try {
     const deletedUser = await db.query(

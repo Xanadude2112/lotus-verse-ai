@@ -2,6 +2,7 @@ const db = require("../connection");
 
 //CREATE
 
+// create a new image
 const createImage = async (image) => {
   const { img_url, prompt_text, user_id } = image;
   try {
@@ -21,6 +22,7 @@ const createImage = async (image) => {
 
 //READ
 
+// get all images
 const getAllImages = async () => {
   try {
     const allImages = await db.query(`
@@ -32,6 +34,7 @@ const getAllImages = async () => {
   }
 };
 
+// get an image by id
 const getImageById = async (id) => {
   try {
     const image = await db.query(
@@ -47,6 +50,7 @@ const getImageById = async (id) => {
   }
 };
 
+// get images by user_id
 const getImagesByUserId = async (user_id) => {
   try {
     const images = await db.query(
@@ -62,6 +66,7 @@ const getImagesByUserId = async (user_id) => {
   }
 };
 
+// get images by prompt_text
 const getImagesByPrompt = async (prompt_text) => {
   try {
     const images = await db.query(
@@ -77,6 +82,7 @@ const getImagesByPrompt = async (prompt_text) => {
   }
 };
 
+// sort images by oldest
 const viewImageByOldest = async () => {
   try {
     const images = await db.query(
@@ -91,6 +97,7 @@ const viewImageByOldest = async () => {
   }
 };
 
+// sort images by newest
 const viewImageByNewest = async () => {
   try {
     const images = await db.query(
@@ -109,6 +116,7 @@ const viewImageByNewest = async () => {
 
 //DELETE
 
+// delete an image by id
 const deleteImage = async (id) => {
   try {
     const deletedImage = await db.query(
