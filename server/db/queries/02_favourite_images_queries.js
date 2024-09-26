@@ -3,6 +3,7 @@ const db = require("../connection");
 //CREATE
 
 const createFavouriteImage = async (favourite_image) => {
+  const { user_id, image_id } = favourite_image;
   try {
  const newFavouriteImage = await db.query(
   // Insert the 'user_id' and 'image_id' into the 'favourite_images' table
@@ -14,7 +15,7 @@ const createFavouriteImage = async (favourite_image) => {
   RETURNING *;
   `,
   // The values for 'user_id' and 'image_id' to replace the placeholders
-  [favourite_image.user_id, favourite_image.image_id]
+  [user_id, image_id]
 );
 // Return the first row (the new favorite image record) from the query result
 return newFavouriteImage.rows[0];
