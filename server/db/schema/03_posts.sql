@@ -6,4 +6,4 @@ CREATE TABLE posts (
   image_id INTEGER REFERENCES images(id) ON DELETE CASCADE,
   caption TEXT,
   created_at TIMESTAMP DEFAULT NOW()
-)
+);

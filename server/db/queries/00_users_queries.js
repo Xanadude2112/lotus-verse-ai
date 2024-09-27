@@ -4,7 +4,7 @@ const db = require("../connection");
 
 // create a new user
 const createUser = async (user) => {
-  const { username, email, password } = user;
+  const { username, email, hashedPassword } = user;
   try {
     const newUser = await db.query(
       `
@@ -12,14 +12,18 @@ const createUser = async (user) => {
       VALUES ($1, $2, $3)
       RETURNING *;
     `,
-      [username, email, password]
+      [username, email, hashedPassword]
     );
     return newUser.rows[0];
   } catch (err) {
+    // Handle unique constraint violation error
+    if (err.code === '23505') { // 23505 is the unique violation error code in PostgreSQL
+      throw new Error('Username or email already exists');
+    }
     console.log(`ERROR: ${err}`);
+    throw err; // Rethrow the error for further handling
   }
 };
-
 
 // READ
 
@@ -87,7 +91,7 @@ const getUserByUsername = async (username) => {
 // UPDATE
 
 // edit a user
-const udpdateUser = async (id, username, email, password) => {
+const updateUser = async (id, username, email, hashedPassword) => {
   try {
     const updatedUser = await db.query(
       `
@@ -96,7 +100,7 @@ const udpdateUser = async (id, username, email, password) => {
       WHERE id = $1
       RETURNING *;
     `,
-      [id, username, email, password]
+      [id, username, email, hashedPassword]
     );
     return updatedUser.rows[0];
   } catch (err) {
@@ -129,6 +133,6 @@ module.exports = {
   getUserById,
   getUserByEmail,
   getUserByUsername,
-  udpdateUser,
+  updateUser,
   deleteUser,
 };

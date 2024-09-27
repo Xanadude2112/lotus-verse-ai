@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL UNIQUE, -- Specifies that the 'username' column must be unique
+  email VARCHAR(255) NOT NULL UNIQUE, -- Specifies that the 'email' column must be unique
   password VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
