@@ -46,6 +46,34 @@ router.post("/register", async (req, res) => {
 });
 
 
+// login a user
+// http://localhost:8080/users/login
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: "Please fill in all fields" });
+  }
+  try {
+    const user = await getUserByEmail(email);
+
+    if(!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    
+    // thiis is bcrypt comparing the password from the request to the hashed password in the database
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if(!isPasswordValid) {
+      return res.status(401).json ({ message: "Invalid email or password" });
+    }
+
+    console.log(`USER LOGGED IN OK!! ✅ ${user}`);
+    res.status(200).json({ message: "User logged in successfully" });
+  } catch (err) {
+    console.error(`Error in login route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+})
 
 
 
