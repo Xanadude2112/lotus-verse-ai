@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 // const jwt = require('jsonwebtoken');
-const userRoutes = require("./user_routes")
+const userRoutes = require("./user_routes");
 const router = express.Router();
 const {
   getUserById,
@@ -31,10 +31,10 @@ router.post("/:id/generate", async (req, res) => {
     // Check if the user exists
     const userId = await getUserById(id);
     if (!userId) {
-       // Return a structured response with a message and link
-       return res.status(401).json({ 
-        message: 'Please log in to view images.', 
-        loginLink: '/login' 
+      // Return a structured response with a message and link
+      return res.status(401).json({
+        message: "Please log in to view images.",
+        loginLink: "/login",
       });
     }
 
@@ -65,9 +65,9 @@ router.get("/:id", async (req, res) => {
     const userId = await getUserById(id);
     if (!userId) {
       // Return a structured response with a message and link
-      return res.status(401).json({ 
-        message: 'Please log in to view images.', 
-        loginLink: '/login' 
+      return res.status(401).json({
+        message: "Please log in to view images.",
+        loginLink: "/login",
       });
     }
 
@@ -84,21 +84,20 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-// get a specific image by id 
+// get a specific image by id
 // http://localhost:8080/images/:id/:image_id
 router.get("/:id/:image_id", async (req, res) => {
   const { id, image_id } = req.params;
   //check if the user has permission to view the image
-  try{
+  try {
     const userId = await getUserById(id);
-    if(!userId) {
-       // Return a structured response with a message and link
-       return res.status(401).json({ 
-        message: 'Please log in to view images.', 
-        loginLink: '/login' 
+    if (!userId) {
+      // Return a structured response with a message and link
+      return res.status(401).json({
+        message: "Please log in to view images.",
+        loginLink: "/login",
       });
-    } 
+    }
 
     const image = await getImageById(image_id);
     if (!image) {
@@ -110,25 +109,25 @@ router.get("/:id/:image_id", async (req, res) => {
   } catch (err) {
     console.error(`Error in get image by id route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
-  } 
-})
+  }
+});
 
 // get a specific image by prompt
 // http://localhost:8080/images/:id/prompt/:prompt_text
 router.get("/:id/prompt/:prompt_text", async (req, res) => {
-  const { id, prompt_text } = req.params; 
-  try{
+  const { id, prompt_text } = req.params;
+  try {
     const userId = await getUserById(id);
-    if(!userId) {
-       // Return a structured response with a message and link
-       return res.status(401).json({ 
-        message: 'Please log in to view images.', 
-        loginLink: '/login' 
+    if (!userId) {
+      // Return a structured response with a message and link
+      return res.status(401).json({
+        message: "Please log in to view images.",
+        loginLink: "/login",
       });
     }
 
     const image = await getImagesByPrompt(prompt_text);
-    if (!image) {
+    if (image.length === 0) {
       return res.status(404).json({ message: "Image not found" });
     }
 
@@ -136,6 +135,39 @@ router.get("/:id/prompt/:prompt_text", async (req, res) => {
     res.status(200).json(image);
   } catch (err) {
     console.error(`Error in get image by prompt route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+});
+
+// delete a specific image
+// http://localhost:8080/images/:id/delete/:image_id
+router.delete("/:id/delete/:image_id", async (req, res) => {
+  const { id, image_id } = req.params;
+  try {
+    const userId = await getUserById(id);
+
+    if (!userId) {
+      // Return a structured response with a message and link
+      return res.status(401).json({
+        message: "Please log in to view images.",
+        loginLink: "/login",
+      });
+    }
+
+    const image = await getImageById(image_id);
+    if (!image) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    const deletedImage = await deleteImage(image_id);
+    if (!deletedImage) {
+      return res.status(500).json({ message: "Image deletion failed" });
+    }
+
+    console.log(`IMAGE DELETED: ${deletedImage}`);
+    res.status(200).json(deletedImage);
+  } catch (err) {
+    console.error(`Error in delete image route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
   }
 });
