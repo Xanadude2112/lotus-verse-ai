@@ -45,7 +45,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
 // login a user
 // http://localhost:8080/users/login
 router.post("/login", async (req, res) => {
@@ -74,7 +73,6 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again." });
   }
 })
-
 
 
 module.exports = router;
