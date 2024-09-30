@@ -90,7 +90,7 @@ const App = () => {
       <button onClick={throttledGenerateImage} disabled={loading}>
         {loading ? "Generating..." : "Generate Image"}
       </button>
-      {image && <img src={image} alt="Generated" style={{ width: "400px" }} />}
+      {image && <img src={image} alt="Generated" style={{ width: "600px" }} />}
     </div>
   );
 };

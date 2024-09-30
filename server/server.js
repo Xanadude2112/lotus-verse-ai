@@ -3,6 +3,7 @@ require("dotenv").config();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const userRoutes = require('./routes/user_routes');
+const imagesRoutes = require('./routes/images_routes');
 require("./db/connection");
 
 const PORT = process.env.PORT || 8080;
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', userRoutes);
+app.use('/images', imagesRoutes);
 
 app.get("/", (req, res) => {
   res.send(`WE ARE LIVE MFFFFFFF 🏎️💨`);
