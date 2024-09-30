@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const userRoutes = require('./routes/user_routes');
 const imagesRoutes = require('./routes/images_routes');
+const faveImagesRoutes = require('./routes/favourite_images_routes');
 require("./db/connection");
 
 const PORT = process.env.PORT || 8080;
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', userRoutes);
 app.use('/images', imagesRoutes);
+app.use('favorites', faveImagesRoutes);
 
 app.get("/", (req, res) => {
   res.send(`WE ARE LIVE MFFFFFFF 🏎️💨`);

@@ -1,7 +1,5 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
 // const jwt = require('jsonwebtoken');
-const userRoutes = require("./user_routes");
 const router = express.Router();
 const {
   getUserById,
@@ -15,7 +13,6 @@ const {
   getImagesByPrompt,
   deleteImage,
 } = require("../db/queries/01_images_queries");
-const { route } = require("./user_routes");
 
 // generate a new image
 // http://localhost:8080/images/:id/generate
