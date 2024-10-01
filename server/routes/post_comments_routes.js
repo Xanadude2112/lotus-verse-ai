@@ -45,7 +45,7 @@ router.post("/:user_id/:post_id", async (req, res) => {
     }
     // Pass the correct
 
-    const postComment = await commentOnAPost(comment_content);
+    const postComment = await commentOnAPost(comment_content, post_id, user_id);
 
     if (!postComment) {
       return res.status(500).json({ message: "Post comment failed" });
@@ -58,5 +58,30 @@ router.post("/:user_id/:post_id", async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again." });
   }
 });
+
+// get all comments on a post
+// http://localhost:8080/comments/:post_id
+router.get("/:post_id", async (req, res) => {
+  const { post_id } = req.params;
+  try {
+    // Check if the post exists
+    const post = await getPostById(post_id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const comments = await viewAllCommentsOnAPost(post_id);
+    if (comments === emptyArray) { // Adjusted this check
+      return res.status(404).json({ message: "No comments found" });
+    }
+
+    console.log(`Comments found successfully! ✅ ${comments}`);
+    res.status(200).json(comments);
+  } catch (err) {
+    console.error(`Error in get comments route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+});
+
 
 module.exports = router;

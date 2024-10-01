@@ -30,7 +30,7 @@ const viewAllCommentsOnAPost = async (post_id) => {
   try {
     const allComments = await db.query(
       `
-      SELECT post_comments.id, post_comments.comment_content, post_comments.created_at, post_comments.updated_at, u.username
+      SELECT post_comments.id, post_comments.comment_content, post_comments.created_at, u.username
       FROM post_comments post_comments
       JOIN users u ON post_comments.user_id = u.id
       WHERE post_comments.post_id = $1
