@@ -126,7 +126,7 @@ router.delete("/:user_id/:post_id/delete", async (req, res) => {
     console.error(`Error in delete post route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
   }
-}
+});
 
 
 
