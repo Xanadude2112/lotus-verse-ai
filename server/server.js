@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', userRoutes);
 app.use('/images', imagesRoutes);
-app.use('favorites', faveImagesRoutes);
+app.use('/favorites', faveImagesRoutes);
 
 app.get("/", (req, res) => {
   res.send(`WE ARE LIVE MFFFFFFF 🏎️💨`);

@@ -2,9 +2,7 @@ const express = require("express");
 // const jwt = require('jsonwebtoken');
 const router = express.Router();
 const {
-  getUserById,
-  getUserByUsername,
-  getUserByEmail,
+  getUserById
 } = require("../db/queries/00_users_queries");
 const {
   createImage,
@@ -13,6 +11,8 @@ const {
   getImagesByPrompt,
   deleteImage,
 } = require("../db/queries/01_images_queries");
+
+const emptyArray = [];
 
 // generate a new image
 // http://localhost:8080/images/:id/generate
@@ -69,7 +69,7 @@ router.get("/:id", async (req, res) => {
     }
 
     const userImages = await getImagesByUserId(id);
-    if (userImages.length === 0) {
+    if (userImages === emptyArray) {
       return res.status(404).json({ message: "No images found" });
     }
 
@@ -124,7 +124,7 @@ router.get("/:id/prompt/:prompt_text", async (req, res) => {
     }
 
     const image = await getImagesByPrompt(prompt_text);
-    if (image.length === 0) {
+    if (!image) {
       return res.status(404).json({ message: "Image not found" });
     }
 
