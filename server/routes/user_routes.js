@@ -92,4 +92,18 @@ router.put("/:id/edit", async (req, res) => {
   }
 });
 
+
+// delete a user
+// http://localhost:8080/users/:id/delete
+router.delete("/:id/delete", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedUser = await deleteUser(id);
+    console.log(`USER DELETED OK!! ✅ ${deletedUser}`);
+    res.status(200).json(deletedUser);
+  } catch (err) {
+    console.error(`Error in delete route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+})
 module.exports = router;
