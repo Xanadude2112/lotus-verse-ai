@@ -4,8 +4,6 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const {
   createUser,
-  getAllUsers,
-  getUserById,
   getUserByEmail,
   getUserByUsername,
   updateUser,
@@ -74,5 +72,24 @@ router.post("/login", async (req, res) => {
   }
 })
 
+
+// edit a user's information
+// http://localhost:8080/users/:id/edit
+router.put("/:id/edit", async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: "Please fill in all fields" });
+  }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const editedUser = await updateUser(req.params.id, username, email, hashedPassword);
+    console.log(`USER EDITED OK!! ✅ ${editedUser}`);
+    res.status(200).json(editedUser);
+  } catch (err) {
+    console.error(`Error in edit route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+});
 
 module.exports = router;
