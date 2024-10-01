@@ -81,6 +81,16 @@ router.put("/:id/edit", async (req, res) => {
     return res.status(400).json({ error: "Please fill in all fields" });
   }
   try {
+     // Check if the user exists
+     const userId = await getUserById(req.params.id);
+     if (!userId) {
+       // Return a structured response with a message and link
+       return res.status(401).json({
+         message: "You are not authorized to edit this user.",
+         loginLink: "/login",
+       });
+     }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const editedUser = await updateUser(req.params.id, username, email, hashedPassword);
@@ -93,11 +103,21 @@ router.put("/:id/edit", async (req, res) => {
 });
 
 
-// delete a user
+// delete a user's account
 // http://localhost:8080/users/:id/delete
 router.delete("/:id/delete", async (req, res) => {
   const { id } = req.params;
   try {
+     // Check if the user exists
+     const userId = await getUserById(id);
+     if (!userId) {
+       // Return a structured response with a message and link
+       return res.status(401).json({
+         message: "You are not authorized to delete this user.",
+         loginLink: "/login",
+       });
+     }
+
     const deletedUser = await deleteUser(id);
     console.log(`USER DELETED OK!! ✅ ${deletedUser}`);
     res.status(200).json(deletedUser);
@@ -106,4 +126,5 @@ router.delete("/:id/delete", async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again." });
   }
 })
+
 module.exports = router;
