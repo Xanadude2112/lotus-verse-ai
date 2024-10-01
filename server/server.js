@@ -22,7 +22,7 @@ app.use('/users', userRoutes);
 app.use('/images', imagesRoutes);
 app.use('/favorites', faveImagesRoutes);
 app.use('/posts', postRoutes);
-app.use('/posts/like', postLikesRoutes);
+app.use('/likes', postLikesRoutes);
 
 app.get("/", (req, res) => {
   res.send(`WE ARE LIVE MFFFFFFF 🏎️💨`);

@@ -25,7 +25,7 @@ const emptyArray = [];
 
 
 // like a post
-// http://localhost:8080/posts/like/:user_id/:post_id
+// http://localhost:8080/likes/:user_id/:post_id
 router.post("/:user_id/:post_id", async (req, res) => {
   const { user_id, post_id } = req.params;
   try {
@@ -58,6 +58,26 @@ router.post("/:user_id/:post_id", async (req, res) => {
     res.status(201).json(postLike);
   } catch (err) {
     console.error(`Error in like post route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+});
+
+
+// see all likes of a post
+// http://localhost:8080/likes/:post_id
+// Retrieve likes for a specific post
+router.get("/:post_id", async (req, res) => {
+  const { post_id } = req.params;
+  try {
+    const postLikes = await viewPostLikes(post_id);
+    if (postLikes.length === 0) {
+      return res.status(404).json({ message: "No likes on this post" });
+    }
+
+    console.log(`Post likes retrieved successfully! ✅ ${postLikes}`);
+    res.status(200).json(postLikes);
+  } catch (err) {
+    console.error(`Error in view post likes route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
   }
 });

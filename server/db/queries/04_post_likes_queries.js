@@ -34,15 +34,14 @@ const viewPostLikes = async (post_id) => {
       `,
       [post_id]
     );
-    if (postLikes.rows.length === 0) {
-      throw new Error('No likes found for this post.');
-    }
-    return postLikes.rows;
+    console.log(`Likes for post_id ${post_id}:`, postLikes.rows); // Log the rows
+    return postLikes.rows; // Returns an array (could be empty if no likes found)
   } catch (err) {
     console.error(`ERROR in viewPostLikes: ${err.message}`);
     throw new Error('Unable to retrieve post likes.');
   }
 };
+
 
 // DELETE
 const unlikeAPost = async (post_like) => {
