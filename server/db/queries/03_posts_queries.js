@@ -3,15 +3,15 @@ const db = require("../connection");
 //CREATE
 
 const createPost = async (post) => {
-  const { user_id, image_id, caption } = post;
+  const { user_id, image_id, img_url, caption } = post;
   try {
     const newPost = await db.query(
       `
-      INSERT INTO posts (user_id, image_id, caption)
-      VALUES ($1, $2, $3)
+      INSERT INTO posts (user_id, image_id, img_url, caption)
+      VALUES ($1, $2, $3, $4)
       RETURNING *;
       `,
-      [user_id, image_id, caption]
+      [user_id, image_id, img_url, caption]
     );
     return newPost.rows[0];
   } catch (err) {

@@ -23,15 +23,15 @@ const {
 const emptyArray = [];
 
 // create a post
-// http://localhost:8080/posts/:user_id/
-router.post("/:id", async (req, res) => {
+// http://localhost:8080/posts/:user_id/:image_id
+router.post("/:user_id/:image_id", async (req, res) => {
   // this has the user id and the image id through the params
   const { user_id, image_id } = req.params;
   // this has the image url and caption through the body
-  const { image_url, caption } = req.body;
+  const { img_url, caption } = req.body;
   try {
     // Check if the user exists
-    const userId = await getUserById(id);
+    const userId = await getUserById(user_id);
     if (!userId) {
       // Return a structured response with a message and link
       return res.status(401).json({
@@ -48,7 +48,7 @@ router.post("/:id", async (req, res) => {
     const post = await createPost({
       user_id,
       image_id,
-      image_url,
+      img_url,
       caption
     });
 
@@ -99,7 +99,34 @@ router.get("/:id/:post_id", async (req, res) => {
 });
 
 
+// delete a post
+// http://localhost:8080/posts/:user_id/:post_id/delete
+router.delete("/:user_id/:post_id/delete", async (req, res) => {
+  const { user_id, post_id } = req.params;
+  try {
+    // Check if the user exists
+    const userId = await getUserById(user_id);
+    if (!userId) {
+      // Return a structured response with a message and link
+      return res.status(401).json({
+        message: "Please log in to delete posts.",
+        loginLink: "/login",
+      });
+    }
 
+    const post = await getPostById(post_id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const deletedPost = await deletePost(post_id);
+    console.log(`Post deleted successfully! ✅ ${deletedPost}`);
+    res.status(200).json(deletedPost);
+  } catch (err) {
+    console.error(`Error in delete post route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+}
 
 
 

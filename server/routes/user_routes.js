@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const {
   createUser,
+  getUserById,
   getUserByEmail,
   getUserByUsername,
   updateUser,
