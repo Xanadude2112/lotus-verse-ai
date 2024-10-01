@@ -79,7 +79,7 @@ router.get("/:post_id", async (req, res) => {
     //  }
 
     const postLikes = await viewPostLikes(post_id);
-    if (postLikes.length === 0) {
+    if (postLikes === emptyArray) {
       return res.status(404).json({ message: "No likes on this post" });
     }
 
