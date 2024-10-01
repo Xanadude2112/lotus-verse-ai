@@ -82,7 +82,7 @@ router.get("/:id", async (req, res) => {
 
 // unfavourite an image
 // http://localhost:8080/favorites/:id/unfavourite/:image_id
-router.delete("/:id/unfavourite/:image_id", async (req, res) => {
+router.delete("/:id/unfavorite/:image_id", async (req, res) => {
   const { id, image_id } = req.params;
   try {
     // Check if the user exists
@@ -100,7 +100,7 @@ router.delete("/:id/unfavourite/:image_id", async (req, res) => {
       return res.status(404).json({ message: "Image not found" });
     }
 
-    const faveImage = await deleteFavouriteImage(id, image_id);
+    const faveImage = await deleteFavouriteImage({ user_id: id, image_id });
 
     if (!faveImage) {
       return res.status(500).json({ message: "Unfavourite image failed" });
