@@ -34,7 +34,7 @@ router.post("/:user_id/:post_id", async (req, res) => {
     if (!userId) {
       // Return a structured response with a message and link
       return res.status(401).json({
-        message: "Please log in to like posts.",
+        message: "You are not authorized to like posts.",
         loginLink: "/login",
       });
     }
@@ -65,10 +65,19 @@ router.post("/:user_id/:post_id", async (req, res) => {
 
 // see all likes of a post
 // http://localhost:8080/likes/:post_id
-// Retrieve likes for a specific post
 router.get("/:post_id", async (req, res) => {
-  const { post_id } = req.params;
+  const { post_id, user_id } = req.params;
   try {
+    //  // Check if the user exists
+    //  const userId = await getUserById(user_id);
+    //  if (!userId) {
+    //    // Return a structured response with a message and link
+    //    return res.status(401).json({
+    //      message: "Please log in to view post likes.",
+    //      loginLink: "/login",
+    //    });
+    //  }
+
     const postLikes = await viewPostLikes(post_id);
     if (postLikes.length === 0) {
       return res.status(404).json({ message: "No likes on this post" });
@@ -82,6 +91,43 @@ router.get("/:post_id", async (req, res) => {
   }
 });
 
+
+// unlike a post
+// http://localhost:8080/likes/:user_id/:post_id/unlike
+router.delete("/:user_id/:post_id/unlike", async (req, res) => {
+  const { user_id, post_id } = req.params;
+  try {
+    // Check if the user exists
+    const userId = await getUserById(user_id);
+    if (!userId) {
+      // Return a structured response with a message and link
+      return res.status(401).json({
+        message: "You are not authorized to unlike posts.",
+        loginLink: "/login",
+      });
+    }
+
+    const post = await getPostById(post_id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const postLike = await unlikeAPost({
+      user_id,
+      post_id,
+    });
+
+    if (!postLike) {
+      return res.status(500).json({ message: "Post unlike failed" });
+    }
+
+    console.log(`Post unliked successfully! ✅ ${postLike}`);
+    res.status(200).json(postLike);
+  } catch (err) {
+    console.error(`Error in unlike post route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+});
 
 
 module.exports = router;
