@@ -84,4 +84,32 @@ router.get("/:post_id", async (req, res) => {
 });
 
 
+// delete a comment
+// http://localhost:8080/comments/:user_id/:comment_id/delete
+router.delete("/:user_id/:comment_id/delete", async (req, res) => {
+  const { user_id, comment_id } = req.params;
+  try {
+    // Check if the user exists
+    const userId = await getUserById(user_id);
+    if (!userId) {
+      // Return a structured response with a message and link
+      return res.status(401).json({
+        message: "You are not authorized to delete comments.",
+        loginLink: "/login",
+      });
+    }
+
+    const comment = await deleteComment(comment_id);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    console.log(`Comment deleted successfully! ✅ ${comment}`);
+    res.status(200).json(comment);
+  } catch (err) {
+    console.error(`Error in delete comment route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+});
+
 module.exports = router;
