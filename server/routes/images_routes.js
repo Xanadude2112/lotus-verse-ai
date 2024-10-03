@@ -1,9 +1,6 @@
 const express = require("express");
-// const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const router = express.Router();
-const {
-  getUserById
-} = require("../db/queries/00_users_queries");
 const {
   createImage,
   getImageById,
@@ -14,32 +11,39 @@ const {
 
 const emptyArray = [];
 
-// generate a new image
-// http://localhost:8080/images/:id/generate
-router.post("/:id/generate", async (req, res) => {
-  const { id } = req.params; // user id
-  const { prompt_text, img_url } = req.body;
-  if (!prompt_text) {
-    return res
-      .status(400)
-      .json({ error: "Please enter a prompt to generate an image" });
+// Middleware to authenticate JWT
+const authenticateJWT = (req, res, next) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ message: "Access token is required" });
   }
-  try {
-    // Check if the user exists
-    const userId = await getUserById(id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to view images.",
-        loginLink: "/login",
-      });
-    }
 
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: "Invalid token" });
+    }
+    req.user = user; // Add user information to request
+    next();
+  });
+};
+
+// generate a new image
+// http://localhost:8080/images/generate
+router.post("/generate", authenticateJWT, async (req, res) => {
+  const { prompt_text, img_url } = req.body;
+  const userId = req.user.id; // Get user ID from the JWT token
+
+  if (!prompt_text) {
+    return res.status(400).json({ error: "Please enter a prompt to generate an image" });
+  }
+
+  try {
     // Pass the correct field names to createImage
     const newImage = await createImage({
       prompt_text,
       img_url,
-      user_id: id,
+      user_id: userId,
     });
 
     if (!newImage) {
@@ -55,20 +59,11 @@ router.post("/:id/generate", async (req, res) => {
 });
 
 // get all user images
-// http://localhost:8080/images/:id
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
+// http://localhost:8080/images/
+router.get("/", authenticateJWT, async (req, res) => {
+  const userId = req.user.id; // Get user ID from the JWT token
   try {
-    const userId = await getUserById(id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to view images.",
-        loginLink: "/login",
-      });
-    }
-
-    const userImages = await getImagesByUserId(id);
+    const userImages = await getImagesByUserId(userId);
     if (userImages === emptyArray) {
       return res.status(404).json({ message: "No images found" });
     }
@@ -82,23 +77,16 @@ router.get("/:id", async (req, res) => {
 });
 
 // get a specific image by id
-// http://localhost:8080/images/:id/:image_id
-router.get("/:id/:image_id", async (req, res) => {
-  const { id, image_id } = req.params;
-  //check if the user has permission to view the image
+// http://localhost:8080/images/:image_id
+router.get("/:image_id", authenticateJWT, async (req, res) => {
+  const { image_id } = req.params;
+  const userId = req.user.id; // Get user ID from the JWT token
+  
+  // Check if the user has permission to view the image
   try {
-    const userId = await getUserById(id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to view images.",
-        loginLink: "/login",
-      });
-    }
-
     const image = await getImageById(image_id);
-    if (!image) {
-      return res.status(404).json({ message: "Image not found" });
+    if (!image || image.user_id !== userId) { // Check if the image belongs to the user
+      return res.status(404).json({ message: "Image not found or access denied" });
     }
 
     console.log(`IMAGE FOUND: ${image}`);
@@ -110,26 +98,21 @@ router.get("/:id/:image_id", async (req, res) => {
 });
 
 // get a specific image by prompt
-// http://localhost:8080/images/:id/prompt/:prompt_text
-router.get("/:id/prompt/:prompt_text", async (req, res) => {
-  const { id, prompt_text } = req.params;
+// http://localhost:8080/images/prompt/:prompt_text
+router.get("/prompt/:prompt_text", authenticateJWT, async (req, res) => {
+  const { prompt_text } = req.params;
+  const userId = req.user.id; // Get user ID from the JWT token
+
   try {
-    const userId = await getUserById(id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to view images.",
-        loginLink: "/login",
-      });
+    const images = await getImagesByPrompt(prompt_text);
+    const filteredImages = images.filter(image => image.user_id === userId); // Filter images by user
+
+    if (filteredImages.length === 0) {
+      return res.status(404).json({ message: "No images found for this prompt" });
     }
 
-    const image = await getImagesByPrompt(prompt_text);
-    if (!image) {
-      return res.status(404).json({ message: "Image not found" });
-    }
-
-    console.log(`IMAGE FOUND: ${image}`);
-    res.status(200).json(image);
+    console.log(`IMAGES FOUND: ${filteredImages}`);
+    res.status(200).json(filteredImages);
   } catch (err) {
     console.error(`Error in get image by prompt route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
@@ -137,23 +120,15 @@ router.get("/:id/prompt/:prompt_text", async (req, res) => {
 });
 
 // delete a specific image
-// http://localhost:8080/images/:id/delete/:image_id
-router.delete("/:id/delete/:image_id", async (req, res) => {
-  const { id, image_id } = req.params;
+// http://localhost:8080/images/delete/:image_id
+router.delete("/delete/:image_id", authenticateJWT, async (req, res) => {
+  const { image_id } = req.params;
+  const userId = req.user.id; // Get user ID from the JWT token
+  
   try {
-    const userId = await getUserById(id);
-
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to view images.",
-        loginLink: "/login",
-      });
-    }
-
     const image = await getImageById(image_id);
-    if (!image) {
-      return res.status(404).json({ message: "Image not found" });
+    if (!image || image.user_id !== userId) { // Check if the image belongs to the user
+      return res.status(404).json({ message: "Image not found or access denied" });
     }
 
     const deletedImage = await deleteImage(image_id);
