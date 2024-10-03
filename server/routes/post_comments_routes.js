@@ -23,6 +23,20 @@ const {
 } = require("../db/queries/05_post_comments_queries");
 const emptyArray = [];
 
+// middleware to verify JWT
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
 // comment on a post
 // http://localhost:8080/comments/:user_id/:post_id
 router.post("/:user_id/:post_id", async (req, res) => {

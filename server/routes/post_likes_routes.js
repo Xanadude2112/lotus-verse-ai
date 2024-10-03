@@ -1,21 +1,8 @@
 const express = require("express");
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { getUserById } = require("../db/queries/00_users_queries");
-const { getImageById } = require("../db/queries/01_images_queries");
-const {
-  createFavouriteImage,
-  getFavouriteImagesByUser,
-  deleteFavouriteImage,
-} = require("../db/queries/02_favourite_images_queries");
-const {
-  createPost,
-  getAllPosts,
-  getPostById,
-  getPostByUsername,
-  updatePostCaption,
-  deletePost,
-} = require("../db/queries/03_posts_queries");
+const { getPostById } = require("../db/queries/03_posts_queries");
 const {
   likeAPost,
   viewPostLikes,
@@ -23,27 +10,31 @@ const {
 } = require("../db/queries/04_post_likes_queries");
 const emptyArray = [];
 
+// Middleware to verify JWT
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
 
-// like a post
-// http://localhost:8080/likes/:user_id/:post_id
-router.post("/:user_id/:post_id", async (req, res) => {
-  const { user_id, post_id } = req.params;
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+// like a post 
+// http://localhost:8080/likes/:post_id
+router.post("/:post_id", authenticateToken, async (req, res) => {
+  const { post_id } = req.params;
+  const user_id = req.user.id; // Use the user ID from the JWT token
+  
   try {
-    // Check if the user exists
-    const userId = await getUserById(user_id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "You are not authorized to like posts.",
-        loginLink: "/login",
-      });
-    }
-
     const post = await getPostById(post_id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    // Pass the correct
 
     const postLike = await likeAPost({
       user_id,
@@ -62,22 +53,11 @@ router.post("/:user_id/:post_id", async (req, res) => {
   }
 });
 
-
-// see all likes of a post
+// see all likes of a post 
 // http://localhost:8080/likes/:post_id
 router.get("/:post_id", async (req, res) => {
-  const { post_id, user_id } = req.params;
+  const { post_id } = req.params;
   try {
-    //  // Check if the user exists
-    //  const userId = await getUserById(user_id);
-    //  if (!userId) {
-    //    // Return a structured response with a message and link
-    //    return res.status(401).json({
-    //      message: "Please log in to view post likes.",
-    //      loginLink: "/login",
-    //    });
-    //  }
-
     const postLikes = await viewPostLikes(post_id);
     if (postLikes === emptyArray) {
       return res.status(404).json({ message: "No likes on this post" });
@@ -91,22 +71,13 @@ router.get("/:post_id", async (req, res) => {
   }
 });
 
-
-// unlike a post
-// http://localhost:8080/likes/:user_id/:post_id/unlike
-router.delete("/:user_id/:post_id/unlike", async (req, res) => {
-  const { user_id, post_id } = req.params;
+// unlike a post 
+// http://localhost:8080/likes/:post_id/unlike
+router.delete("/:post_id/unlike", authenticateToken, async (req, res) => {
+  const { post_id } = req.params;
+  const user_id = req.user.id; // Use the user ID from the JWT token
+  
   try {
-    // Check if the user exists
-    const userId = await getUserById(user_id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "You are not authorized to unlike posts.",
-        loginLink: "/login",
-      });
-    }
-
     const post = await getPostById(post_id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -128,6 +99,5 @@ router.delete("/:user_id/:post_id/unlike", async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again." });
   }
 });
-
 
 module.exports = router;
