@@ -8,11 +8,10 @@ const {
   getImagesByPrompt,
   deleteImage,
 } = require("../db/queries/01_images_queries");
-
 const emptyArray = [];
 
 // Middleware to authenticate JWT
-const authenticateJWT = (req, res, next) => {
+const authenticateToken = (req, res, next) => {
   const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
   
   if (!token) {
@@ -30,7 +29,7 @@ const authenticateJWT = (req, res, next) => {
 
 // generate a new image
 // http://localhost:8080/images/generate
-router.post("/generate", authenticateJWT, async (req, res) => {
+router.post("/generate", authenticateToken, async (req, res) => {
   const { prompt_text, img_url } = req.body;
   const userId = req.user.id; // Get user ID from the JWT token
 
@@ -60,7 +59,7 @@ router.post("/generate", authenticateJWT, async (req, res) => {
 
 // get all user images
 // http://localhost:8080/images/
-router.get("/", authenticateJWT, async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
   const userId = req.user.id; // Get user ID from the JWT token
   try {
     const userImages = await getImagesByUserId(userId);
@@ -78,7 +77,7 @@ router.get("/", authenticateJWT, async (req, res) => {
 
 // get a specific image by id
 // http://localhost:8080/images/:image_id
-router.get("/:image_id", authenticateJWT, async (req, res) => {
+router.get("/:image_id", authenticateToken, async (req, res) => {
   const { image_id } = req.params;
   const userId = req.user.id; // Get user ID from the JWT token
   
@@ -99,7 +98,7 @@ router.get("/:image_id", authenticateJWT, async (req, res) => {
 
 // get a specific image by prompt
 // http://localhost:8080/images/prompt/:prompt_text
-router.get("/prompt/:prompt_text", authenticateJWT, async (req, res) => {
+router.get("/prompt/:prompt_text", authenticateToken, async (req, res) => {
   const { prompt_text } = req.params;
   const userId = req.user.id; // Get user ID from the JWT token
 
@@ -121,7 +120,7 @@ router.get("/prompt/:prompt_text", authenticateJWT, async (req, res) => {
 
 // delete a specific image
 // http://localhost:8080/images/delete/:image_id
-router.delete("/delete/:image_id", authenticateJWT, async (req, res) => {
+router.delete("/delete/:image_id", authenticateToken, async (req, res) => {
   const { image_id } = req.params;
   const userId = req.user.id; // Get user ID from the JWT token
   

@@ -4,13 +4,11 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const {
   createUser,
-  getUserById,
   getUserByEmail,
   getUserByUsername,
   updateUser,
   deleteUser,
 } = require("../db/queries/00_users_queries");
-const JWT_SECRET = process.env.JWT_SECRET;
 
 // middleware to verify jwt
 const authenticateToken = (req, res, next) => {
@@ -19,7 +17,7 @@ const authenticateToken = (req, res, next) => {
 
   if (!token) return res.sendStatus(401);
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
     next();

@@ -1,9 +1,6 @@
 const express = require("express");
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
-const {
-  getUserById
-} = require("../db/queries/00_users_queries");
 const {
   getImageById
 } = require("../db/queries/01_images_queries");
@@ -14,28 +11,33 @@ const {
 } = require("../db/queries/02_favourite_images_queries");
 const emptyArray = [];
 
-// favourite an image
-// http://localhost:8080/favorites/:id/:image_id
-router.post("/:id/:image_id", async (req, res) => {
-  const { id, image_id } = req.params;
-  try {
-    // Check if the user exists
-    const userId = await getUserById(id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to favourite images.",
-        loginLink: "/login",
-      });
+// Middleware to verify JWT
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
+  if (!token) {
+    return res.status(401).json({ message: "Access denied. No token provided." });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Invalid token." });
     }
+    req.userId = decoded.id; // Assuming the JWT payload contains the user ID
+    next();
+  });
+};
 
+// favourite an image
+// http://localhost:8080/favorites/:image_id
+router.post("/:image_id", authenticateToken, async (req, res) => {
+  const { image_id } = req.params;
+  try {
     const image = await getImageById(image_id);
     if (!image) {
       return res.status(404).json({ message: "Image not found" });
     }
-    // Pass the correct field names to createImage
+    
     const faveImage = await createFavouriteImage({
-      user_id: id,
+      user_id: req.userId,
       image_id,
     });
 
@@ -52,24 +54,12 @@ router.post("/:id/:image_id", async (req, res) => {
 });
 
 // get all user favourite images
-// http://localhost:8080/favorites/:id
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
+// http://localhost:8080/favorites
+router.get("/", authenticateToken, async (req, res) => {
   try {
-    // Check if the user exists
-    const userId = await getUserById(id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to view favourite images.",
-        loginLink: "/login",
-      });
-    }
-
-    const faveImages = await getFavouriteImagesByUser(id);
-
+    const faveImages = await getFavouriteImagesByUser(req.userId);
     if (faveImages === emptyArray) {
-      return res.status(500).json({ message: "There are no favourite images to display" });
+      return res.status(404).json({ message: "There are no favourite images to display" });
     }
 
     console.log(`Favourite images found successfully! ✅ ${faveImages}`);
@@ -81,26 +71,16 @@ router.get("/:id", async (req, res) => {
 });
 
 // unfavourite an image
-// http://localhost:8080/favorites/:id/unfavourite/:image_id
-router.delete("/:id/unfavorite/:image_id", async (req, res) => {
-  const { id, image_id } = req.params;
+// http://localhost:8080/favorites/unfavorite/:image_id
+router.delete("/unfavorite/:image_id", authenticateToken, async (req, res) => {
+  const { image_id } = req.params;
   try {
-    // Check if the user exists
-    const userId = await getUserById(id);
-    if (!userId) {
-      // Return a structured response with a message and link
-      return res.status(401).json({
-        message: "Please log in to unfavourite images.",
-        loginLink: "/login",
-      });
-    }
-
     const image = await getImageById(image_id);
     if (!image) {
       return res.status(404).json({ message: "Image not found" });
     }
 
-    const faveImage = await deleteFavouriteImage({ user_id: id, image_id });
+    const faveImage = await deleteFavouriteImage({ user_id: req.userId, image_id });
 
     if (!faveImage) {
       return res.status(500).json({ message: "Unfavourite image failed" });
