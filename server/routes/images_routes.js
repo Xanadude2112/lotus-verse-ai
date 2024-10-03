@@ -10,22 +10,20 @@ const {
 } = require("../db/queries/01_images_queries");
 const emptyArray = [];
 
-// Middleware to authenticate JWT
+// middleware to verify jwt
 const authenticateToken = (req, res, next) => {
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ message: "Access token is required" });
-  }
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  if (!token) return res.sendStatus(401);
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: "Invalid token" });
-    }
-    req.user = user; // Add user information to request
+    if (err) return res.sendStatus(403);
+    req.user = user;
     next();
   });
 };
+
 
 // generate a new image
 // http://localhost:8080/images/generate

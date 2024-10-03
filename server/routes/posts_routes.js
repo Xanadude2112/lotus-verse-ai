@@ -22,18 +22,31 @@ const {
 } = require("../db/queries/03_posts_queries");
 const emptyArray = [];
 
+
+// middleware to verify jwt
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+
 // create a post
 // http://localhost:8080/posts/:user_id/:image_id
-router.post("/:user_id/:image_id", async (req, res) => {
-  // this has the user id and the image id through the params
+router.post("/:user_id/:image_id", authenticateToken, async (req, res) => {
   const { user_id, image_id } = req.params;
-  // this has the image url and caption through the body
   const { img_url, caption } = req.body;
   try {
     // Check if the user exists
     const userId = await getUserById(user_id);
     if (!userId) {
-      // Return a structured response with a message and link
       return res.status(401).json({
         message: "Please log in to create posts.",
         loginLink: "/login",
@@ -44,7 +57,7 @@ router.post("/:user_id/:image_id", async (req, res) => {
     if (!image) {
       return res.status(404).json({ message: "Image not found" });
     }
-    // Pass the correct field names to createPost
+    
     const post = await createPost({
       user_id,
       image_id,
@@ -64,7 +77,6 @@ router.post("/:user_id/:image_id", async (req, res) => {
   }
 });
 
-
 // get all posts
 // http://localhost:8080/posts
 router.get("/", async (req, res) => {
@@ -79,12 +91,12 @@ router.get("/", async (req, res) => {
     console.error(`Error in get all posts route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
   }
-}); 
+});
 
 // get a post by id
 // http://localhost:8080/posts/:user_id/:post_id
-router.get("/:id/:post_id", async (req, res) => {
-  const { id, post_id } = req.params;
+router.get("/:user_id/:post_id", async (req, res) => {
+  const { post_id } = req.params; // user_id is not needed here
   try {
     const post = await getPostById(post_id);
     if (!post) {
@@ -98,16 +110,13 @@ router.get("/:id/:post_id", async (req, res) => {
   }
 });
 
-
 // delete a post
 // http://localhost:8080/posts/:user_id/:post_id/delete
-router.delete("/:user_id/:post_id/delete", async (req, res) => {
+router.delete("/:user_id/:post_id/delete", authenticateToken, async (req, res) => {
   const { user_id, post_id } = req.params;
   try {
-    // Check if the user exists
     const userId = await getUserById(user_id);
     if (!userId) {
-      // Return a structured response with a message and link
       return res.status(401).json({
         message: "Please log in to delete posts.",
         loginLink: "/login",
@@ -127,7 +136,5 @@ router.delete("/:user_id/:post_id/delete", async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again." });
   }
 });
-
-
 
 module.exports = router;

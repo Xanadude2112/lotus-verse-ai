@@ -11,20 +11,20 @@ const {
 } = require("../db/queries/02_favourite_images_queries");
 const emptyArray = [];
 
-// Middleware to verify JWT
+// middleware to verify jwt
 const authenticateToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
-  if (!token) {
-    return res.status(401).json({ message: "Access denied. No token provided." });
-  }
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid token." });
-    }
-    req.userId = decoded.id; // Assuming the JWT payload contains the user ID
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
     next();
   });
 };
+
 
 // favourite an image
 // http://localhost:8080/favorites/:image_id
