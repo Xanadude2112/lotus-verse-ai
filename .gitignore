@@ -1,7 +1,0 @@
-/node_modules
-
-# Ignore environment variables for server
-/server/.env
-
-# Ignore environment variables for client
-/client/.env
