@@ -7,7 +7,17 @@
   top: 0;
   left: 0;
   z-index: 1000; // Ensure it stays above other content
-  background: linear-gradient(to bottom, #000000, #000000b7);
+  background-color: #000000;
+}
+
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 5%; // Center the border (100% - 80%)/2 = 10%
+  width: 90%; // This will make the border 80% long
+  border-bottom: 2px solid #8a8a8aa2; // The actual border
+  border-radius: 20px;
 }
 
 .nav-title {
@@ -18,10 +28,10 @@
   color: #ec78a8;
   filter: drop-shadow(0 0 1rem #0ba500);
   margin-left: 3%;  
-  animation: pulseAnimation 5s infinite alternate ease-in-out;
+  animation: glow 5s infinite alternate ease-in-out;
 }
 
-@keyframes pulseAnimation {
+@keyframes glow {
   0% {
     filter: drop-shadow(0 0 1rem #0ba500); 
   }
