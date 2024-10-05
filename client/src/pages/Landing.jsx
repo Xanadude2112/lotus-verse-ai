@@ -57,12 +57,12 @@ export const Landing = ({ setUserIsLoggedIn }) => {
   const registerUser = async (e) => {
     e.preventDefault();
     const { username, email, password } = userRegisterInfo;
-      // const token = localStorage.getItem('jwt')
+      const token = localStorage.getItem('jwt')
     try {
       const response = await fetch("http://localhost:8080/users/register", {
         headers: {
           "Content-Type": "application/json",
-          //"authorization": `Bearer ${token}`
+          "authorization": `Bearer ${token}`
         },
         method: "POST",
         body: JSON.stringify({ username, email, password }),
@@ -90,8 +90,8 @@ export const Landing = ({ setUserIsLoggedIn }) => {
        //take the token from the response and add it to localstorage
        if (data.token) {
         localStorage.setItem("jwt", data.token);
-      }  
-
+        localStorage.setItem("username", data.username); // Store username
+      }
       setUserIsLoggedIn(data.username);
       console.log(`User registered successfully! ✅`);
       navigate("/posts");
@@ -105,12 +105,12 @@ export const Landing = ({ setUserIsLoggedIn }) => {
   const loginUser = async (e) => {
     e.preventDefault();
     const { email, password } = userLoginInfo;
-    // const token = localStorage.getItem('jwt')
+    const token = localStorage.getItem('jwt')
     try {
       const response = await fetch("http://localhost:8080/users/login", {
         headers: {
           "Content-Type": "application/json",
-        //"authorization": `Bearer ${token}`
+        "authorization": `Bearer ${token}`
         },
         method: "POST",
         body: JSON.stringify({ email, password }),
@@ -124,8 +124,8 @@ export const Landing = ({ setUserIsLoggedIn }) => {
       //take the token from the response and add it to localstorage
       if (data.token) {
         localStorage.setItem("jwt", data.token);
-      }      
-
+        localStorage.setItem("username", data.username); // Store username
+      }
       setUserIsLoggedIn(data.username);
       console.log(`User logged in successfully! ✅`);
       navigate("/posts");
