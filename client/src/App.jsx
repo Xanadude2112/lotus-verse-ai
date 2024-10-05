@@ -1,17 +1,24 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; 
 import { Landing } from "./pages/Landing";
+// import { Posts } from "./pages/Posts";
 import "./styles/App.scss";
 
 function App() {
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(null);
+
   return (
-    <Router>
-      <div className="App">
+    <div className="App">
+      <Router>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route
+            path="/"
+            element={<Landing setUserIsLoggedIn={setUserIsLoggedIn} />}
+          />
+          {/* <Route path="/posts" element={<Posts />} /> */}
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </div>
   );
 }
 

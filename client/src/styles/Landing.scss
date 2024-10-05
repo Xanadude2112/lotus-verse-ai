@@ -1,0 +1,126 @@
+// .body {
+//   background-image: linear-gradient(to bottom, #151515, #4e4e4e);
+// }
+
+.master-landing {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-top: 5%;
+}
+
+.landing-title{
+  font-family: "Righteous", cursive;
+  font-size: 5rem;
+  background-image: linear-gradient(to bottom, #0ba500, #e35892);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  margin: 5% 0;
+}
+
+.landing-interaction {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  margin: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: "Exo 2", sans-serif;
+  font-weight: 600;
+}
+
+.login {
+  border: 5px solid #e35892;
+  border-radius: 15px;
+  background-color: #e35892;
+  transition: 0.25s;
+}
+
+.sign-up {
+  background-color: #0ba500;
+  border: solid 5px #0ba500;
+  border-radius: 15px;
+  transition: 0.25s;
+}
+
+.login:hover {
+  background-color: #ffffff;
+  color: #e35892;
+  filter: drop-shadow(0 5px 0.60rem #e35892)
+}
+
+.sign-up:hover {
+  background-color: #ffffff;
+  color: #0ba500;
+  filter: drop-shadow(0 5px 0.60rem #0ba500)
+}
+
+.lotus {
+  width: 20%;
+  filter: drop-shadow(0 0 1rem #0ba500);
+  animation: pulseAnimation 5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseAnimation {
+  0% {
+    filter: drop-shadow(0 0 1rem #0ba500); /* Green */
+    transform: translateY(0); /* Initial position */
+  }
+  50% {
+    filter: drop-shadow(0 0 0.65rem #ffffff); /* White */
+    transform: translateY(-10px); /* Hover slightly up */
+  }
+  100% {
+    filter: drop-shadow(0 0 1rem #e35892); /* Pink */
+    transform: translateY(0); /* Return to original position */
+  }
+}
+
+.login-divider-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  border: 5px solid #e35892;
+  border-radius: 15px;
+  font-family: "Exo 2", sans-serif;
+  padding: 3% 0;
+}
+
+.login-form-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.login-form-content input {
+  width: 70%;
+  padding: 2%;
+  margin: 0.5rem;
+  border: 5px solid #e35892;
+  border-radius: 15px;
+  font-family: "Exo 2", sans-serif;
+}

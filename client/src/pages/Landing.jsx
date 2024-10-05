@@ -1,16 +1,28 @@
 import React, { useState } from "react";
+import lotus from "../assets/images/lily.png";
+import "../styles/Landing.scss";
+import { LandingNavbar } from "../components/Landing/LandingNavbar";
 
-export const Landing = () => {
+export const Landing = ({ userIsLoggedIn, setUserIsLoggedIn }) => {
   const [userRegisterInfo, setUserRegisterInfo] = useState({
     username: "",
     email: "",
     password: "",
   });
-
   const [userLoginInfo, setUserLoginInfo] = useState({
     email: "",
     password: "",
   });
+  const [loginState, setLoginState] = useState(false);
+  const [signupState, setSignupState] = useState(false);
+
+  const handleLogin = () => {
+    setLoginState(!loginState);
+  };
+
+  const handleSignup = () => {
+    setSignupState(!signupState);
+  };
 
   const registerUser = async (e) => {
     e.preventDefault();
@@ -29,7 +41,10 @@ export const Landing = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      console.log(`User registered successfully! ✅`); 
+      const data = await response.json();
+
+      setUserIsLoggedIn(data.username);
+      console.log(`User registered successfully! ✅`);
     } catch (error) {
       console.error("Error registering user:", error);
     }
@@ -51,12 +66,14 @@ export const Landing = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const data = await response.json();
 
+      setUserIsLoggedIn(data.username);
       console.log(`User logged in successfully! ✅`);
     } catch (error) {
       console.error("Error logging in user:", error);
     }
-  }
+  };
 
   const handleRegisterChange = (e) => {
     setUserRegisterInfo({
@@ -73,55 +90,63 @@ export const Landing = () => {
   };
 
   return (
-    <div>
-      <div>
-        <h1>Register</h1>
-        <form>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={userRegisterInfo.username}
-            onChange={handleRegisterChange}
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={userRegisterInfo.email}
-            onChange={handleRegisterChange}
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={userRegisterInfo.password}
-            onChange={handleRegisterChange}
-          />
-          <button type="button" onClick={registerUser}>Register</button>
-        </form>
+    <>
+      <LandingNavbar userIsLoggedIn={userIsLoggedIn} />
+    <div className="master-landing">
+        <h1 className="landing-title">Bring Your Creations To Life</h1>
+      <div className="landing-interaction">
+        {loginState && (
+          <div className="login-divider-container">
+            <img className="lotus" src={lotus} alt="" />
+            <div className="login-form">
+              <h2>Login 🪷</h2>
+              <form className="login-form-content" onSubmit={loginUser}>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  onChange={handleLoginChange}
+                />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  onChange={handleLoginChange}
+                />
+                <button type="submit" className="btn login">
+                  Login
+                </button>
+              </form>
+              <p
+                className="sign-up-link-text"
+              >Don't have an account?
+                <span 
+                className="sign-up-link"
+                onClick={() => {
+                  handleLogin();
+                  handleSignup();
+                }}>
+                 sign up here!
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
+        {!loginState && (
+          <>
+            <button className="btn sign-up" onClick={handleSignup}>
+              Sign Up
+            </button>
+            <img className="lotus" src={lotus} alt="" />
+            <button className="btn login" onClick={handleLogin}>
+              Login
+            </button>
+          </>
+        )}
       </div>
-
-      <div>
-        <h1>Login</h1>
-        <form>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={userLoginInfo.email}
-            onChange={handleLoginChange}
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={userLoginInfo.password}
-            onChange={handleLoginChange}
-          />
-          <button type="button" onClick={loginUser}>Login</button>
-        </form>
-      </div>
+      <div className="landing-text"></div>
     </div>
+    
+    </>
   );
 };

@@ -133,4 +133,23 @@ router.delete("/:id/delete", authenticateToken, async (req, res) => {
   }
 });
 
+// get user information (protected)
+// http://localhost:8080/users/:id
+router.get("/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    // if the user is not the owner of the account, return 403
+    if (req.user.userId !== parseInt(id, 10)) {
+      return res.status(403).json({ message: "Not authorized to view this user" });
+    }
+
+    const user = await getUserById(id);
+    console.log(`USER FOUND OK!! ✅ ${user}`);
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(`Error in get user route: ${err.message}`);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+});
+
 module.exports = router;
