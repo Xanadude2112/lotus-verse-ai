@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; 
 import { Landing } from "./pages/Landing";
-// import { Posts } from "./pages/Posts";
+import { Posts } from "./pages/Posts";
 import "./styles/App.scss";
 
 function App() {
@@ -13,9 +13,9 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Landing setUserIsLoggedIn={setUserIsLoggedIn} navigate={navigate}/>}
+            element={<Landing setUserIsLoggedIn={setUserIsLoggedIn}/>}
           />
-          {/* <Route path="/posts" element={<Posts />} /> */}
+          <Route path="/posts" element={<Posts userIsLoggedIn={userIsLoggedIn}/>} />
         </Routes>
       </Router>
     </div>

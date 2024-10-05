@@ -85,7 +85,7 @@ export const Landing = ({ setUserIsLoggedIn }) => {
       }
   
       const data = await response.json();
-      setUserIsLoggedIn(data.newUser.username);
+      setUserIsLoggedIn(data.username);
       console.log(`User registered successfully! ✅`);
       navigate("/posts");
     } catch (error) {

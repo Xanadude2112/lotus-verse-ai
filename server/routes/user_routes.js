@@ -50,7 +50,7 @@ router.post("/register", async (req, res) => {
     // generate a jwt
     const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.status(201).json({ newUser, token });
+    res.status(201).json({ newUser, token, username: newUser.username });
   } catch (err) {
     console.error(`Error in register route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
@@ -81,7 +81,7 @@ router.post("/login", async (req, res) => {
     // generate a jwt
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.status(200).json({ message: "User logged in successfully", token });
+    res.status(200).json({ message: "User logged in successfully", token, username: user.username });
   } catch (err) {
     console.error(`Error in login route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
