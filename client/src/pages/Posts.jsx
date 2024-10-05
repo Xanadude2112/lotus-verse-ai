@@ -1,9 +1,9 @@
   import { Navbar } from "../components/Navbar";
 
-  export const Posts = ({ userIsLoggedIn }) => {
+  export const Posts = ({ userIsLoggedIn, setUserIsLoggedIn }) => {
     return (
       <div>
-        <Navbar userIsLoggedIn={userIsLoggedIn}/>
+        <Navbar userIsLoggedIn={userIsLoggedIn} setUserIsLoggedIn={setUserIsLoggedIn}/>
       </div>
     );
   }

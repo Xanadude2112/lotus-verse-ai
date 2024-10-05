@@ -12,8 +12,10 @@ const {
 
 // middleware to verify jwt
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.headers["authorization"]; //3 parts: part 1 is Bearer, part 2 is token, part 3 is username
   const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  //'Authorization: ' Bearer token
 
   if (!token) return res.sendStatus(401);
 
@@ -45,10 +47,14 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await createUser({ username, email, hashedPassword });
-    console.log(`USER REGISTERED OK!! ✅ ${newUser.username} ${newUser.email} ${newUser.hashedPassword}`);
+    console.log(
+      `USER REGISTERED OK!! ✅ ${newUser.username} ${newUser.email} ${newUser.hashedPassword}`
+    );
 
     // generate a jwt
-    const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.status(201).json({ newUser, token, username: newUser.username });
   } catch (err) {
@@ -56,7 +62,6 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again." });
   }
 });
-
 
 // login a user
 // http://localhost:8080/users/login
@@ -79,9 +84,17 @@ router.post("/login", async (req, res) => {
     console.log(`USER LOGGED IN OK!! ✅ ${user}`);
 
     // generate a jwt
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
-    res.status(200).json({ message: "User logged in successfully", token, username: user.username });
+    res
+      .status(200)
+      .json({
+        message: "User logged in successfully",
+        token,
+        username: user.username,
+      });
   } catch (err) {
     console.error(`Error in login route: ${err.message}`);
     res.status(500).json({ message: "Server error. Please try again." });
@@ -97,12 +110,19 @@ router.put("/:id/edit", authenticateToken, async (req, res) => {
   }
   try {
     if (req.user.userId !== parseInt(req.params.id, 10)) {
-      return res.status(403).json({ message: "Not authorized to edit this user" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to edit this user" });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const editedUser = await updateUser(req.params.id, username, email, hashedPassword);
+    const editedUser = await updateUser(
+      req.params.id,
+      username,
+      email,
+      hashedPassword
+    );
 
     console.log(`USER EDITED OK!! ✅ ${editedUser}`);
     res.status(200).json(editedUser);
@@ -121,7 +141,9 @@ router.delete("/:id/delete", authenticateToken, async (req, res) => {
     // parseInt is used to convert the string id to a number
     // 10 converts any number strings to numbers from a collection of numbers (0-9)
     if (req.user.userId !== parseInt(id, 10)) {
-      return res.status(403).json({ message: "Not authorized to delete this user" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this user" });
     }
 
     const deletedUser = await deleteUser(id);
@@ -140,7 +162,9 @@ router.get("/:id", authenticateToken, async (req, res) => {
   try {
     // if the user is not the owner of the account, return 403
     if (req.user.userId !== parseInt(id, 10)) {
-      return res.status(403).json({ message: "Not authorized to view this user" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to view this user" });
     }
 
     const user = await getUserById(id);

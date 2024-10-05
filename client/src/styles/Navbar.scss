@@ -1,0 +1,71 @@
+.navbar {
+  width: 100%;
+  font-family: "Exo 2", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; // Ensure it stays above other content
+  background: linear-gradient(to bottom, #000000, #000000b7);
+}
+
+.nav-title {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  color: #ec78a8;
+  filter: drop-shadow(0 0 1rem #0ba500);
+  margin-left: 3%;  
+  animation: pulseAnimation 5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseAnimation {
+  0% {
+    filter: drop-shadow(0 0 1rem #0ba500); 
+  }
+  50% {
+    filter: drop-shadow(0 0 0.5rem #0ba500); 
+  }
+  100% {
+    filter: drop-shadow(0 0 1rem #0ba500);
+  }
+}
+
+.nav-interaction{
+  width: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nav-lotus {
+  width: 10%;
+}
+
+.nav-welcome{
+  width: 50%;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  margin: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: "Exo 2", sans-serif;
+  font-weight: 600;
+}
+
+.logout {
+  background-color: #0ba500;
+  border: solid 5px #0ba500;
+  border-radius: 15px;
+  transition: 0.25s;
+}
+
+.logout:hover {
+  border: 5px solid #e35892;
+  border-radius: 15px;
+  background-color: #e35892;
+}

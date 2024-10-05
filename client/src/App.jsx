@@ -15,7 +15,7 @@ function App() {
             path="/"
             element={<Landing setUserIsLoggedIn={setUserIsLoggedIn}/>}
           />
-          <Route path="/posts" element={<Posts userIsLoggedIn={userIsLoggedIn}/>} />
+          <Route path="/posts" element={<Posts userIsLoggedIn={userIsLoggedIn} setUserIsLoggedIn={setUserIsLoggedIn}/>} />
         </Routes>
       </Router>
     </div>
