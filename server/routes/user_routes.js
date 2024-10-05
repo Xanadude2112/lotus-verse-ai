@@ -25,7 +25,6 @@ const authenticateToken = (req, res, next) => {
 };
 
 // register a new user
-// http://localhost:8080/users/register
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
@@ -36,10 +35,10 @@ router.post("/register", async (req, res) => {
     const emailExists = await getUserByEmail(email);
 
     if (userExists) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(409).json({ message: "Username already exists" });
     }
     if (emailExists) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(409).json({ message: "Email already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -57,6 +56,7 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again." });
   }
 });
+
 
 // login a user
 // http://localhost:8080/users/login

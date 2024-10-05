@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import lotus from "../assets/images/lily.png";
 import "../styles/Landing.scss";
 import { LandingNavbar } from "../components/Landing/LandingNavbar";
 
 export const Landing = ({ setUserIsLoggedIn }) => {
+  const navigate = useNavigate();
   const [userRegisterInfo, setUserRegisterInfo] = useState({
     username: "",
     email: "",
@@ -55,7 +57,7 @@ export const Landing = ({ setUserIsLoggedIn }) => {
   const registerUser = async (e) => {
     e.preventDefault();
     const { username, email, password } = userRegisterInfo;
-
+  
     try {
       const response = await fetch("http://localhost:8080/users/register", {
         headers: {
@@ -64,25 +66,34 @@ export const Landing = ({ setUserIsLoggedIn }) => {
         method: "POST",
         body: JSON.stringify({ username, email, password }),
       });
-
+  
+      // Check if response is OK (status 2xx)
       if (!response.ok) {
+        const errorData = await response.json(); // Get error details from server
         if (response.status === 400) {
-          console.error("Bad Request: Please check your input.");
+          if (errorData.message) {
+            alert(`Registration error: ${errorData.message}`);
+          } else {
+            alert("Bad Request: Please fill in all fields correctly.");
+          }
         } else if (response.status === 409) {
-          console.error("Conflict: User already exists.");
+          alert("Conflict: Username or email already exists.");
         } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          alert(`An unknown error occurred. Status: ${response.status}`);
         }
         return;
       }
-
+  
       const data = await response.json();
-      setUserIsLoggedIn(data.username);
+      setUserIsLoggedIn(data.newUser.username);
       console.log(`User registered successfully! ✅`);
+      navigate("/posts");
     } catch (error) {
+      alert("There was a problem registering the user. Please try again later.");
       console.error("Error registering user:", error);
     }
   };
+  
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -104,6 +115,7 @@ export const Landing = ({ setUserIsLoggedIn }) => {
 
       setUserIsLoggedIn(data.username);
       console.log(`User logged in successfully! ✅`);
+      navigate("/posts");
     } catch (error) {
       console.error("Error logging in user:", error);
     }
@@ -208,9 +220,11 @@ export const Landing = ({ setUserIsLoggedIn }) => {
                   Login
                 </button>
               </div>
-              <h2 className={`fade-text ${isFading ? "fade-out" : "fade-in"}`}>
-                "{welcomeText}"
-              </h2>
+                <h2
+                  className={`fade-text ${isFading ? "fade-out" : "fade-in"}`}
+                >
+                  "{welcomeText}"
+                </h2>
             </div>
           )}
         </div>

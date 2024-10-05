@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Landing setUserIsLoggedIn={setUserIsLoggedIn} />}
+            element={<Landing setUserIsLoggedIn={setUserIsLoggedIn} navigate={navigate}/>}
           />
           {/* <Route path="/posts" element={<Posts />} /> */}
         </Routes>
