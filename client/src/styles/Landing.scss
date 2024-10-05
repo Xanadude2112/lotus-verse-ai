@@ -29,7 +29,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 100px;
+}
+
+.landing-content{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.landing-buttons{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5%;
+  margin: 5%;
 }
 
 .btn {
@@ -89,11 +105,13 @@
   }
 }
 
-.login-divider-container {
+.user-access-divider-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  gap: 15%;
   width: 90%;
+  margin-bottom: 5%;
 }
 
 .login-form {
@@ -123,4 +141,119 @@
   border: 5px solid #e35892;
   border-radius: 15px;
   font-family: "Exo 2", sans-serif;
+  color: #ffffff;
+  background-color: inherit;
+}
+
+.login-form-content input:focus {
+  outline: none;
+}
+
+.login-link-text {
+  color: #ffffff;
+  font-size: 1rem;
+  margin: 1rem;
+}
+
+.login-link{
+  color: #f25f9c;
+  font-size: 1rem;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.login-link:hover {
+  color: #ffffff;
+  filter: drop-shadow(0 0 0.25rem #ffffff);
+}
+
+.sign-up-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  border: 5px solid #0ba500;
+  border-radius: 15px;
+  font-family: "Exo 2", sans-serif;
+  padding: 3% 0;
+}
+
+.sign-up-form-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.sign-up-form-content input {
+  width: 70%;
+  padding: 2%;
+  margin: 0.5rem;
+  border: 5px solid #0ba500;
+  border-radius: 15px;
+  font-family: "Exo 2", sans-serif;
+  color: #ffffff;
+  background-color: inherit;
+}
+
+.sign-up-form-content input:focus {
+  outline: none;
+}
+
+.sign-up-link-text {
+  color: #ffffff;
+  font-size: 1rem;
+  margin: 1rem;
+}
+
+.sign-up-link{
+  color: #0ba500;
+  font-size: 1rem;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.sign-up-link:hover {
+  color: #ffffff;
+  filter: drop-shadow(0 0 0.25rem #ffffff);
+}
+
+.landing-text{
+  width: 100%;
+  padding: 3%;
+}
+
+.fade-text {
+  opacity: 1;
+  transition: opacity 1s ease-in-out; /* Smooth fade transition */
+  font-family: "Righteous", cursive;
+  font-size: 3rem;
+  background-image: linear-gradient(to bottom, #0ba500, #e35892);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.fade-out {
+  opacity: 0; /* Fading out */
+  font-family: "Righteous", cursive;
+  font-size: 3rem;
+  background-image: linear-gradient(to bottom, #0ba500, #e35892);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.fade-in {
+  opacity: 1; /* Fading in */
+  font-family: "Righteous", cursive;
+  font-size: 3rem;
+  background-image: linear-gradient(to bottom, #0ba500, #e35892);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }

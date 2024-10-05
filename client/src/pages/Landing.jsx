@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import lotus from "../assets/images/lily.png";
 import "../styles/Landing.scss";
 import { LandingNavbar } from "../components/Landing/LandingNavbar";
 
-export const Landing = ({ userIsLoggedIn, setUserIsLoggedIn }) => {
+export const Landing = ({ setUserIsLoggedIn }) => {
   const [userRegisterInfo, setUserRegisterInfo] = useState({
     username: "",
     email: "",
@@ -15,13 +15,41 @@ export const Landing = ({ userIsLoggedIn, setUserIsLoggedIn }) => {
   });
   const [loginState, setLoginState] = useState(false);
   const [signupState, setSignupState] = useState(false);
+  const [welcomeText, setWelcomeText] = useState("A dinosaur skydiving.");
+  const [isFading, setIsFading] = useState(false); // state to control opacity
 
+  useEffect(() => {
+    const texts = [
+      "A dinosaur skydiving.",
+      "A gigantic sea serpent in a typhoon lightning storm.",
+      "A well-behaved frog on a lotus flower.",
+      "A dragon in a blizzard.",
+      "A phoenix rising from the ashes.",
+    ];
+    let currentIndex = 0;
+
+    const cycleText = () => {
+      setIsFading(true); // Start fading out
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % texts.length;
+        setWelcomeText(texts[currentIndex]); // Change text
+        setIsFading(false); // Fade back in
+      }, 1000); // Delay for text change and fade in after fade out
+    };
+
+    const interval = setInterval(cycleText, 3500); // Change text every 3.5 seconds
+    return () => clearInterval(interval); // Clean up on unmount
+  }, []);
+
+  // Simplified logic to toggle either login or signup state
   const handleLogin = () => {
-    setLoginState(!loginState);
+    setLoginState(true);
+    setSignupState(false); // Ensure only one state is true
   };
 
   const handleSignup = () => {
-    setSignupState(!signupState);
+    setSignupState(true);
+    setLoginState(false); // Ensure only one state is true
   };
 
   const registerUser = async (e) => {
@@ -38,11 +66,17 @@ export const Landing = ({ userIsLoggedIn, setUserIsLoggedIn }) => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (response.status === 400) {
+          console.error("Bad Request: Please check your input.");
+        } else if (response.status === 409) {
+          console.error("Conflict: User already exists.");
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return;
       }
 
       const data = await response.json();
-
       setUserIsLoggedIn(data.username);
       console.log(`User registered successfully! ✅`);
     } catch (error) {
@@ -91,62 +125,96 @@ export const Landing = ({ userIsLoggedIn, setUserIsLoggedIn }) => {
 
   return (
     <>
-      <LandingNavbar userIsLoggedIn={userIsLoggedIn} />
-    <div className="master-landing">
-        <h1 className="landing-title">Bring Your Creations To Life</h1>
-      <div className="landing-interaction">
-        {loginState && (
-          <div className="login-divider-container">
-            <img className="lotus" src={lotus} alt="" />
-            <div className="login-form">
-              <h2>Login 🪷</h2>
-              <form className="login-form-content" onSubmit={loginUser}>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  onChange={handleLoginChange}
-                />
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  onChange={handleLoginChange}
-                />
-                <button type="submit" className="btn login">
+      <LandingNavbar />
+      <div className="master-landing">
+        <h1 className="landing-title">Bring Your Visions To Image</h1>
+        <div className="landing-interaction">
+          {loginState && (
+            <div className="user-access-divider-container">
+              <img className="lotus" src={lotus} alt="" />
+              <div className="login-form">
+                <h2>Login 🪷</h2>
+                <form className="login-form-content" onSubmit={loginUser}>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    onChange={handleLoginChange}
+                  />
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    onChange={handleLoginChange}
+                  />
+                  <button type="submit" className="btn login">
+                    Login
+                  </button>
+                </form>
+                <p className="sign-up-link-text">
+                  Don't have an account?
+                  <span className="sign-up-link" onClick={handleSignup}>
+                    Sign up here!
+                  </span>
+                </p>
+              </div>
+            </div>
+          )}
+          {signupState && (
+            <div className="user-access-divider-container">
+              <div className="sign-up-form">
+                <h2>Sign Up 🪷</h2>
+                <form className="sign-up-form-content" onSubmit={registerUser}>
+                  <input
+                    type="username"
+                    name="username"
+                    placeholder="Username"
+                    onChange={handleRegisterChange}
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    onChange={handleRegisterChange}
+                  />
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    onChange={handleRegisterChange}
+                  />
+                  <button type="submit" className="btn sign-up">
+                    Create Account
+                  </button>
+                </form>
+                <p className="login-link-text">
+                  Already have an account?
+                  <span className="login-link" onClick={handleLogin}>
+                    Login!
+                  </span>
+                </p>
+              </div>
+              <img className="lotus" src={lotus} alt="" />
+            </div>
+          )}
+          {!loginState && !signupState && (
+            <div className="landing-content">
+              <div className="landing-buttons">
+                <button className="btn sign-up" onClick={handleSignup}>
+                  Sign Up
+                </button>
+                <img className="lotus" src={lotus} alt="" />
+                <button className="btn login" onClick={handleLogin}>
                   Login
                 </button>
-              </form>
-              <p
-                className="sign-up-link-text"
-              >Don't have an account?
-                <span 
-                className="sign-up-link"
-                onClick={() => {
-                  handleLogin();
-                  handleSignup();
-                }}>
-                 sign up here!
-                </span>
-              </p>
+              </div>
+              <h2 className={`fade-text ${isFading ? "fade-out" : "fade-in"}`}>
+                "{welcomeText}"
+              </h2>
             </div>
-          </div>
-        )}
-        {!loginState && (
-          <>
-            <button className="btn sign-up" onClick={handleSignup}>
-              Sign Up
-            </button>
-            <img className="lotus" src={lotus} alt="" />
-            <button className="btn login" onClick={handleLogin}>
-              Login
-            </button>
-          </>
-        )}
+          )}
+        </div>
       </div>
-      <div className="landing-text"></div>
-    </div>
-    
     </>
   );
 };
