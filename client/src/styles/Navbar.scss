@@ -86,3 +86,27 @@
   border-radius: 15px;
   background-color: #e35892;
 }
+
+.btn {
+  padding: 0.5rem 1rem;
+  margin: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: "Exo 2", sans-serif;
+  font-weight: 600;
+}
+
+.login {
+  border: 5px solid #e35892;
+  border-radius: 15px;
+  background-color: #e35892;
+  transition: 0.25s;
+}
+
+.sign-up {
+  background-color: #0ba500;
+  border: solid 5px #0ba500;
+  border-radius: 15px;
+  transition: 0.25s;
+}

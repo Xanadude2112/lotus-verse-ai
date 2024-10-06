@@ -4,7 +4,13 @@ import lotus from "../assets/images/lily.png";
 import "../styles/Landing.scss";
 import { LandingNavbar } from "../components/Landing/LandingNavbar";
 
-export const Landing = ({ setUserIsLoggedIn }) => {
+export const Landing = ({
+  setUserIsLoggedIn,
+  loginState,
+  setLoginState,
+  signupState,
+  setSignupState,
+}) => {
   const navigate = useNavigate();
   const [userRegisterInfo, setUserRegisterInfo] = useState({
     username: "",
@@ -15,8 +21,6 @@ export const Landing = ({ setUserIsLoggedIn }) => {
     email: "",
     password: "",
   });
-  const [loginState, setLoginState] = useState(false);
-  const [signupState, setSignupState] = useState(false);
   const [welcomeText, setWelcomeText] = useState("A dinosaur skydiving.");
   const [isFading, setIsFading] = useState(false); // state to control opacity
 
@@ -57,17 +61,17 @@ export const Landing = ({ setUserIsLoggedIn }) => {
   const registerUser = async (e) => {
     e.preventDefault();
     const { username, email, password } = userRegisterInfo;
-      const token = localStorage.getItem('jwt')
+    const token = localStorage.getItem("jwt");
     try {
       const response = await fetch("http://localhost:8080/users/register", {
         headers: {
           "Content-Type": "application/json",
-          "authorization": `Bearer ${token}`
+          authorization: `Bearer ${token}`,
         },
         method: "POST",
         body: JSON.stringify({ username, email, password }),
       });
-  
+
       // Check if response is OK (status 2xx)
       if (!response.ok) {
         const errorData = await response.json(); // Get error details from server
@@ -84,11 +88,11 @@ export const Landing = ({ setUserIsLoggedIn }) => {
         }
         return;
       }
-  
+
       const data = await response.json();
 
-       //take the token from the response and add it to localstorage
-       if (data.token) {
+      //take the token from the response and add it to localstorage
+      if (data.token) {
         localStorage.setItem("jwt", data.token);
         localStorage.setItem("username", data.username); // Store username
       }
@@ -96,21 +100,22 @@ export const Landing = ({ setUserIsLoggedIn }) => {
       console.log(`User registered successfully! ✅`);
       navigate("/posts");
     } catch (error) {
-      alert("There was a problem registering the user. Please try again later.");
+      alert(
+        "There was a problem registering the user. Please try again later."
+      );
       console.error("Error registering user:", error);
     }
   };
-  
 
   const loginUser = async (e) => {
     e.preventDefault();
     const { email, password } = userLoginInfo;
-    const token = localStorage.getItem('jwt')
+    const token = localStorage.getItem("jwt");
     try {
       const response = await fetch("http://localhost:8080/users/login", {
         headers: {
           "Content-Type": "application/json",
-        "authorization": `Bearer ${token}`
+          authorization: `Bearer ${token}`,
         },
         method: "POST",
         body: JSON.stringify({ email, password }),
@@ -233,11 +238,9 @@ export const Landing = ({ setUserIsLoggedIn }) => {
                   Login
                 </button>
               </div>
-                <h2
-                  className={`fade-text ${isFading ? "fade-out" : "fade-in"}`}
-                >
-                  "{welcomeText}"
-                </h2>
+              <h2 className={`fade-text ${isFading ? "fade-out" : "fade-in"}`}>
+                "{welcomeText}"
+              </h2>
             </div>
           )}
         </div>
