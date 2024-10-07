@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Landing } from "./pages/Landing";
 import { Posts } from "./pages/Posts";
+import { GenerateImage } from "./pages/GenerateImage";
 import "./styles/App.scss";
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
               />
             }
           />
+          <Route path="/images/generate" element={<GenerateImage />} />
         </Routes>
       </Router>
     </div>

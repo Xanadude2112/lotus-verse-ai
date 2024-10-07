@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { LeftNavbar } from "../components/LeftNavbar";
 import { Navbar } from "../components/Navbar";
 import { PostsList } from "../components/Posts/PostsList";
@@ -11,6 +12,7 @@ export const Posts = ({
   setSignupState,
 }) => {
   const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
 
   const fetchPosts = async () => {
     try {
@@ -41,7 +43,11 @@ export const Posts = ({
         <div className="posts-content">
           {userIsLoggedIn ? (
             <>
-              <button className="generate-plus">
+              <button
+              type="button"
+                className="generate-plus"
+                onClick={() => {navigate("/images/generate")}}  
+              >
                 Generate Your Image <i class="fa-solid fa-plus"></i>
               </button>
               <PostsList posts={posts} />

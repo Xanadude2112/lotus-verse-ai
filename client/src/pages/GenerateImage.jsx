@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const apiToken = import.meta.env.VITE_AI_API_TOKEN; // Assuming this is correct
 
-const App = () => {
+export const GenerateImage = () => {
   const [prompt_text, setPrompt_text] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -95,4 +95,4 @@ const App = () => {
   );
 };
 
-export default App;
+
