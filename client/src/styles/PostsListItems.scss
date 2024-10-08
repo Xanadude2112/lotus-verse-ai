@@ -1,0 +1,102 @@
+.posts-list-item {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 2px #0ba500;
+  border-radius: 20px;
+  margin-bottom: 20px; /* Adds space between rows */
+  box-sizing: border-box; /* Ensures padding and border are included in width */
+  cursor: pointer;
+}
+
+.posts-list-item:hover {
+  border: solid 2px #e35892;
+  filter: drop-shadow(0 0 0.4rem #ffffff);
+  background-color: #1d1d1d;
+
+  .post-image {
+    border-bottom: solid 2px #e35892;
+  }
+}
+
+.post-image {
+  width: 100%;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: solid 2px #0ba500;
+  transition: 0.25s;
+}
+
+.post-name-caption {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1%;
+  margin-top: 5px;
+}
+
+.post-username {
+  font-family: "Righteous", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e35892;
+  margin: 0 0 5% 0;
+  padding: 0;
+}
+
+.post-caption {
+  font-family: "Exo 2", sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.post-buttons {
+  display: flex;
+  justify-content: start;
+  width: 90%;
+  margin-top: 5%;
+  gap: 10%;
+}
+
+.post-comments {
+  font-size: 1.2rem;
+  color: #0ba500;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.post-like {
+  font-size: 1.2rem;
+  color: #0ba500;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.post-buttons i:hover {
+  color: #e35892;
+}
+
+.post-liked {
+  font-size: 1.2rem;
+  color: #e35892;
+}
+
+.post-time{
+  width: 90%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.timeago{
+  align-self: flex-end;
+  font-size: 0.8rem;
+  font-family: "Exo 2", sans-serif;
+  color: #0ba500;
+}

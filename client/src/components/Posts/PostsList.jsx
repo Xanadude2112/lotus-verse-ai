@@ -1,4 +1,5 @@
 import { PostsListItems } from "./PostsListItems";
+import "../../styles/PostsList.scss";
 
 export const PostsList = ({ posts }) => {
   return (
@@ -10,6 +11,7 @@ export const PostsList = ({ posts }) => {
           postImage={post.img_url}
           postCaption={post.caption}
           postTime={post.created_at}
+          postUsername={post.username}  
         />
       ))}
     </div>

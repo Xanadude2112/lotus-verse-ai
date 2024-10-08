@@ -1,0 +1,31 @@
+.generate-image-master {
+  display: flex;
+  flex-direction: row; /* Change to row */
+  justify-content: flex-start; /* Align items to the start */
+  align-items: flex-start; /* Keep both navbar and content aligned */
+  width: 100vw;
+  margin-top: 6.5%;
+}
+
+.images-generate-left-navbar {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100vh;
+  border-right: solid 2px #8a8a8aa2;
+  position: fixed; /* Make the navbar fixed on the left */
+  left: 0;
+  top: 0;
+  margin-top: 6.5%;
+}
+
+.generate-image-ui {
+  flex-grow: 1;
+  margin-left: 20%; /* Push the content to the right to leave space for the navbar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

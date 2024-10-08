@@ -1,0 +1,8 @@
+.posts-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Ensures posts are evenly spaced */
+  align-items: flex-start; /* Aligns posts to the top */
+  width: 90%;
+  margin-top: 5%;
+}

@@ -19,7 +19,7 @@ export const Navbar = ({
 
   return (
     <nav className="navbar">
-      <h1 className="nav-title">
+      <h1 className="nav-title" onClick={()=> {navigate("/posts")}}>
         LotusVerse AI <img className="nav-lotus" src={lotus} alt="" />
       </h1>
       <div className="nav-interaction">

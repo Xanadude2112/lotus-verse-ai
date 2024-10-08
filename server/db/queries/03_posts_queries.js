@@ -25,13 +25,16 @@ const createPost = async (post) => {
 const getAllPosts = async () => {
   try {
     const allPosts = await db.query(`
-      SELECT * FROM posts;
+      SELECT posts.*, users.username
+      FROM posts
+      JOIN users ON posts.user_id = users.id;
     `);
     return allPosts.rows;
   } catch (err) {
     console.log(`ERROR: ${err}`);
   }
 }
+
 
 const getPostById = async (id) => {
   try {
